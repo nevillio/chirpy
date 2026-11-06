@@ -8,7 +8,8 @@ import {
 	handleMetricsRead,
 	handleMetricsReset,
 	middlewareMetricsInc,
-} from './api/metrics.ts';
+} from './admin/metrics.ts';
+import { handleChirpValidation } from './api/chirps.ts';
 import { handleReadinessRead } from './api/readiness.ts';
 
 const app: Express = express();
@@ -29,10 +30,12 @@ const middlewareLogResponse = (
 };
 
 app.use(middlewareLogResponse);
+app.use(express.json());
 app.use('/app', middlewareMetricsInc, express.static('./src/app'));
-app.get('/healthz', handleReadinessRead);
-app.get('/metrics', handleMetricsRead);
-app.get('/reset', handleMetricsReset);
+app.get('/api/healthz', handleReadinessRead);
+app.post('/api/validate_chirp', handleChirpValidation);
+app.get('/admin/metrics', handleMetricsRead);
+app.post('/admin/reset', handleMetricsReset);
 
 app.listen(port, () => {
 	console.log(`Example app listening on port: ${port}`);
