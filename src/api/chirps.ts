@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { BadRequestError, NotFoundError } from '../customErrors.ts';
 import { createChirp, getChirp, getChirps } from '../db/queries/chirps.ts';
+import { BadRequestError, NotFoundError } from './errors.ts';
 import { respondWithJSON } from './json.ts';
 
 function censor(chirp: string) {

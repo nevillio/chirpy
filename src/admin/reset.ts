@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
+import { ForbiddenError } from '../api/errors.ts';
 import { config } from '../config.ts';
-import { ForbiddenError } from '../customErrors.ts';
 import { deleteAllUsers } from '../db/queries/users.ts';
 
 export async function handleUsersReset(req: Request, res: Response) {

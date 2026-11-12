@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { BadRequestError } from '../customErrors.ts';
 import { createUser } from '../db/queries/users.ts';
+import { BadRequestError, ForbiddenError } from './errors.ts';
 
 export async function handleUserCreation(req: Request, res: Response) {
 	const { email = '' } = req.body ?? {};

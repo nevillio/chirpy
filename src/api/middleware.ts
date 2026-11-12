@@ -5,7 +5,7 @@ import {
 	ForbiddenError,
 	NotFoundError,
 	UnauthorizedError,
-} from '../customErrors.ts';
+} from './errors.ts';
 import { respondWithError } from './json.ts';
 
 export function middlewareError(
@@ -15,13 +15,16 @@ export function middlewareError(
 	_next: NextFunction,
 ) {
 	let statusCode = 500;
-	let message = 'Something went wrong on our end';
+	let message =
+		config.api.platform === 'dev'
+			? err.message
+			: 'Something went wrong on our end';
 
 	if (err instanceof BadRequestError) {
 		statusCode = 400;
 		message = err.message;
 	} else if (err instanceof UnauthorizedError) {
-		statusCode = 402;
+		statusCode = 401;
 		message = err.message;
 	} else if (err instanceof ForbiddenError) {
 		statusCode = 403;
