@@ -14,7 +14,11 @@ import {
 	middlewareLogResponse,
 	middlewareMetricsInc,
 } from './api/middleware.ts';
-import { handleUserCreation } from './api/users.ts';
+import {
+	handleUserCreation,
+	handleUserLogin,
+	handleUsersFetch,
+} from './api/users.ts';
 
 const app: Express = express();
 const port = config.api.port;
@@ -24,12 +28,20 @@ app.use(express.json());
 app.use('/app', middlewareMetricsInc, express.static('./src/app'));
 app.get('/api/healthz', handleReadinessRead);
 
-app.post('/api/users', handleUserCreation);
+// chirps
 app.get('/api/chirps', handleChirpsFetch);
 app.get('/api/chirps/:chirpId', handleChirpFetch);
 app.post('/api/chirps', handleChirpCreation);
+
+// users
+app.get('/api/users', handleUsersFetch);
+app.post('/api/users', handleUserCreation);
+app.post('/api/login/', handleUserLogin);
+
+//admin
 app.get('/admin/metrics', handleMetricsRead);
 app.post('/admin/reset', handleUsersReset);
+
 app.use(middlewareError);
 
 app.listen(port, () => {
