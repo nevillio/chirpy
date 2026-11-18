@@ -15,10 +15,7 @@ export function middlewareError(
 	_next: NextFunction,
 ) {
 	let statusCode = 500;
-	let message =
-		config.api.platform === 'dev'
-			? err.message
-			: 'Something went wrong on our end';
+	let message = 'Something went wrong on our end';
 
 	if (err instanceof BadRequestError) {
 		statusCode = 400;
@@ -32,7 +29,10 @@ export function middlewareError(
 	} else if (err instanceof NotFoundError) {
 		statusCode = 404;
 		message = err.message;
+	} else {
+		console.error(err);
 	}
+
 	respondWithError(res, statusCode, message);
 }
 
