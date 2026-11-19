@@ -1,32 +1,35 @@
 {
-  "name": "http-server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build": "pnpm exec tsc",
-    "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts",
-    "generate": "drizzle-kit generate",
-    "migrate": "drizzle-kit migrate",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "devDependencies": {
-    "@biomejs/biome": "2.6.4",
-    "@types/express": "^5.0.6",
-    "@types/node": "^26.6.6",
-    "drizzle-kit": "^0.31.11",
-    "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
-  },
-  "dependencies": {
-    "argon2": "^0.45.2",
-    "drizzle-orm": "^0.45.4",
-    "express": "^5.3.0",
-    "postgres": "^4.0.0"
-  }
+	"name": "http-server",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"build": "pnpm exec tsc",
+		"start": "node dist/index.js",
+		"dev": "tsx watch src/index.ts",
+		"generate": "drizzle-kit generate",
+		"migrate": "drizzle-kit migrate",
+		"test": "vitest --run"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "module",
+	"devDependencies": {
+		"@biomejs/biome": "2.6.4",
+		"@types/express": "^5.0.6",
+		"@types/jsonwebtoken": "^9.0.10",
+		"@types/node": "^26.6.6",
+		"drizzle-kit": "^0.31.11",
+		"tsx": "^4.23.15",
+		"typescript": "^7.0.2",
+		"vitest": "^3.2.7"
+	},
+	"dependencies": {
+		"argon2": "^0.45.2",
+		"drizzle-orm": "^0.45.4",
+		"express": "^5.3.0",
+		"jsonwebtoken": "^9.0.3",
+		"postgres": "^4.0.0"
+	}
 }

@@ -1,4 +1,4 @@
-import { checkPasswordHash, hashPassword } from '../auth.ts';
+import { checkPasswordHash, hashPassword } from '../auth/auth.ts';
 import { createUser, getUser } from '../db/queries/users.ts';
 import type { NewUser } from '../db/schema.ts';
 import { BadRequestError, UnauthorizedError } from './errors.ts';
