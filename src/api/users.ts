@@ -1,4 +1,6 @@
 import type { Request, Response } from 'express';
+import { makeJWT } from '../auth/auth.ts';
+import { config } from '../config.ts';
 import { getUsers } from '../db/queries/users.ts';
 import {
 	authenticateUser,
@@ -25,9 +27,19 @@ export async function handleUserCreation(req: Request, res: Response) {
 }
 
 export async function handleUserLogin(req: Request, res: Response) {
-	const { email = '', password = '' } = req.body ?? {};
+	const ONE_HOUR = 60 * 60;
+	const {
+		email = '',
+		password = '',
+		expiresInSeconds: requestedExpiresInSeconds = 60 * 60,
+	} = req.body ?? {};
+	const expiresInSeconds = Math.min(
+		requestedExpiresInSeconds ?? ONE_HOUR,
+		ONE_HOUR,
+	);
 
 	validateCredentials(email, password);
 	const userResponse = await authenticateUser(email, password);
-	respondWithJSON(res, 200, userResponse);
+	const jwt = makeJWT(userResponse.id, expiresInSeconds, config.api.secret);
+	respondWithJSON(res, 200, { ...userResponse, token: jwt });
 }

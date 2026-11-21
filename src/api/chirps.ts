@@ -1,4 +1,6 @@
 import type { Request, Response } from 'express';
+import { getBearerToken, validateJWT } from '../auth/auth.ts';
+import { config } from '../config.ts';
 import { createChirp, getChirp, getChirps } from '../db/queries/chirps.ts';
 import { BadRequestError, NotFoundError } from './errors.ts';
 import { respondWithJSON } from './json.ts';
@@ -30,22 +32,11 @@ export async function handleChirpFetch(req: Request, res: Response) {
 }
 
 export async function handleChirpCreation(req: Request, res: Response) {
-	const { body: chirp, userId } = req.body ?? {};
+	const { body: chirp } = req.body ?? {};
 
-	let body = '';
-	try {
-		if (
-			typeof chirp !== 'string' ||
-			typeof userId !== 'string' ||
-			chirp.trim() === '' ||
-			userId.trim() === ''
-		) {
-			throw 'invalid chirp';
-		}
-		body = validateChirp(chirp);
-	} catch (error: any) {
-		throw new BadRequestError(error);
-	}
+	const token = getBearerToken(req);
+	const userId = validateJWT(token, config.api.secret);
+	const body = validateChirp(chirp);
 
 	try {
 		const newChirp = await createChirp({ body, userId });
@@ -59,8 +50,12 @@ export async function handleChirpCreation(req: Request, res: Response) {
 }
 
 function validateChirp(chirp: string) {
+	if (typeof chirp !== 'string' || chirp.trim() === '') {
+		throw new BadRequestError('invalid chirp');
+	}
+
 	if (chirp.length > 140) {
-		throw 'Chirp is too long. Max length is 140';
+		throw new BadRequestError('Chirp is too long. Max length is 140');
 	}
 	return censor(chirp);
 }

@@ -5,3 +5,5 @@ import { config } from '../config.ts';
 
 const migrateClient = postgres(config.db.url, { max: 1 });
 await migrate(drizzle(migrateClient), config.db.migrationConfig);
+console.log('Migrations up to date');
+await migrateClient.end();

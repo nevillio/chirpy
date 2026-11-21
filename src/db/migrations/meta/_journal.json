@@ -22,6 +22,27 @@
       "when": 1794472216354,
       "tag": "0002_medical_blacklash",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795267730202,
+      "tag": "0003_young_screwball",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795268573669,
+      "tag": "0004_daffy_fabian_cortez",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795270838506,
+      "tag": "0005_bright_sersi",
+      "breakpoints": true
     }
   ]
 }

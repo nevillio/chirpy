@@ -41,8 +41,7 @@ export async function authenticateUser(
 	}
 
 	const { hashed_password, ...userResponse } = user;
-	const loginSuccess = await checkPasswordHash(password, hashed_password);
-	if (!loginSuccess) {
+	if (!(await checkPasswordHash(password, hashed_password))) {
 		throw new UnauthorizedError(INVALID_CREDENTIALS_MSG);
 	}
 	return userResponse;

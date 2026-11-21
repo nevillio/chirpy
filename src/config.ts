@@ -14,6 +14,7 @@ type APIConfig = {
 	fileServerHits: number;
 	port: number;
 	platform: string;
+	secret: string;
 };
 
 type DBConfig = {
@@ -25,6 +26,7 @@ const api: APIConfig = {
 	fileServerHits: 0,
 	port: Number(envOrThrow('PORT')),
 	platform: envOrThrow('PLATFORM'),
+	secret: envOrThrow('SECRET'),
 };
 
 const db: DBConfig = {
