@@ -43,6 +43,13 @@
       "when": 1795270838506,
       "tag": "0005_bright_sersi",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795461057926,
+      "tag": "0006_misty_chronomancer",
+      "breakpoints": true
     }
   ]
 }

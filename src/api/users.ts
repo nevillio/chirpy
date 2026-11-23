@@ -1,7 +1,9 @@
 import type { Request, Response } from 'express';
-import { makeJWT } from '../auth/auth.ts';
+import { makeJWT, makeRefreshToken } from '../auth/auth.ts';
 import { config } from '../config.ts';
+import { saveRefreshToken } from '../db/queries/refresh_tokens.ts';
 import { getUsers } from '../db/queries/users.ts';
+import { UnauthorizedError } from './errors.ts';
 import {
 	authenticateUser,
 	createAndGetResponse,
@@ -9,7 +11,7 @@ import {
 } from './helpers.ts';
 import { respondWithJSON } from './json.ts';
 
-export async function handleUsersFetch(req: Request, res: Response) {
+export async function handleUsersFetch(_req: Request, res: Response) {
 	const users = await getUsers();
 	if (users.length > 0) {
 		return respondWithJSON(res, 200, users);
@@ -27,19 +29,19 @@ export async function handleUserCreation(req: Request, res: Response) {
 }
 
 export async function handleUserLogin(req: Request, res: Response) {
-	const ONE_HOUR = 60 * 60;
-	const {
-		email = '',
-		password = '',
-		expiresInSeconds: requestedExpiresInSeconds = 60 * 60,
-	} = req.body ?? {};
-	const expiresInSeconds = Math.min(
-		requestedExpiresInSeconds ?? ONE_HOUR,
-		ONE_HOUR,
-	);
+	const { email = '', password = '' } = req.body ?? {};
 
 	validateCredentials(email, password);
+
 	const userResponse = await authenticateUser(email, password);
-	const jwt = makeJWT(userResponse.id, expiresInSeconds, config.api.secret);
-	respondWithJSON(res, 200, { ...userResponse, token: jwt });
+	const userId = userResponse.id || '';
+	const jwt = makeJWT(userId, config.jwt.defaultDuration, config.jwt.secret);
+	const refreshToken = makeRefreshToken();
+
+	const saved = await saveRefreshToken(userId, refreshToken);
+	if (!saved) {
+		throw new UnauthorizedError('could not save refresh token');
+	}
+
+	respondWithJSON(res, 200, { ...userResponse, token: jwt, refreshToken });
 }

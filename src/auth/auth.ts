@@ -1,7 +1,9 @@
 import argon2 from 'argon2';
+import crypto from 'crypto';
 import type { Request } from 'express';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
-import { BadRequestError, ForbiddenError } from '../api/errors.ts';
+import { BadRequestError, UnauthorizedError } from '../api/errors.ts';
+import { config } from '../config.ts';
 
 type Payload = Pick<JwtPayload, 'iss' | 'sub' | 'iat' | 'exp'>;
 export function hashPassword(password: string): Promise<string> {
@@ -22,24 +24,22 @@ export function makeJWT(
 ): string {
 	const iat = Math.floor(Date.now() / 1000);
 	const payload: Payload = {
-		iss: 'chirpy',
+		iss: config.jwt.issuer,
 		sub: userId,
 		iat,
 		exp: iat + expiresIn,
 	};
-	return jwt.sign(payload, secret);
+	return jwt.sign(payload, secret, { algorithm: 'HS256' });
 }
 
 export function validateJWT(tokenString: string, secret: string): string {
 	try {
 		const payload = jwt.verify(tokenString, secret);
-		if (typeof payload === 'string' || typeof payload.sub !== 'string') {
-			throw new ForbiddenError('token invalid');
+		if (typeof payload !== 'string' && typeof payload.sub === 'string') {
+			return payload.sub;
 		}
-		return payload.sub;
-	} catch (error) {
-		throw new ForbiddenError('token invalid');
-	}
+	} catch {}
+	throw new UnauthorizedError('token invalid');
 }
 
 export function extractBearerToken(authorization: string | undefined): string {
@@ -58,4 +58,8 @@ export function extractBearerToken(authorization: string | undefined): string {
 export function getBearerToken(req: Request): string {
 	const authHeader = req.get('authorization');
 	return extractBearerToken(authHeader);
+}
+
+export function makeRefreshToken(): string {
+	return crypto.randomBytes(32).toString('hex');
 }

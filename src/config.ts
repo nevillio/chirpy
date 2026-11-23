@@ -14,7 +14,6 @@ type APIConfig = {
 	fileServerHits: number;
 	port: number;
 	platform: string;
-	secret: string;
 };
 
 type DBConfig = {
@@ -22,11 +21,17 @@ type DBConfig = {
 	migrationConfig: MigrationConfig;
 };
 
+type JWTConfig = {
+	issuer: string;
+	secret: string;
+	defaultDuration: number;
+	refreshDuration: number;
+};
+
 const api: APIConfig = {
 	fileServerHits: 0,
 	port: Number(envOrThrow('PORT')),
 	platform: envOrThrow('PLATFORM'),
-	secret: envOrThrow('SECRET'),
 };
 
 const db: DBConfig = {
@@ -36,7 +41,15 @@ const db: DBConfig = {
 	},
 };
 
+const jwt: JWTConfig = {
+	defaultDuration: 60 * 60,
+	refreshDuration: 60 * 60 * 24 * 60,
+	secret: envOrThrow('SECRET'),
+	issuer: 'chirpy',
+};
+
 export const config = {
 	db,
 	api,
+	jwt,
 };
